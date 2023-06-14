@@ -16,9 +16,6 @@ export class App extends React.Component {
       {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
       {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
       {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
-      {id: 'id-5', name: 'Herxmione Kline', number: '443-89-12'},
-      {id: 'id-6', name: 'Edexn Clements', number: '645-17-79'},
-      {id: 'id-7', name: 'Annxie Copeland', number: '227-91-26'},
     ],
     filter: '',
   }
@@ -26,7 +23,32 @@ export class App extends React.Component {
 
 
 
-  handleSearchSet = (event) => {
+  //--- localStorage ----------
+
+  componentDidMount() {
+    const contactsJson = localStorage.getItem('contacts');
+
+    if (contactsJson) {
+      const parseContacts = JSON.parse(contactsJson);
+      this.setState({ contacts: parseContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const nextLength = prevState.contacts.length;
+    const currentLength = this.state.contacts.length;
+
+    if (currentLength !== nextLength) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+
+  }
+
+  //------ localStorage --------
+
+
+
+  handleFilter = (event) => {
     this.setState({filter: event.target.value,});
   }
 
@@ -84,6 +106,10 @@ export class App extends React.Component {
     const newList = this.state.contacts.filter(contact => contact.id !== key);
     this.setState({contacts: newList});
   }
+
+
+
+
   
 
 
@@ -95,7 +121,7 @@ export class App extends React.Component {
         <ContactForm onAddContact={this.addContact}/>
 
         <h2>Contacts</h2>
-        <Filter searchVal={this.state.filter} onSearchSet={this.handleSearchSet} />
+        <Filter searchVal={this.state.filter} onSearchSet={this.handleFilter} />
         
         <ContactList 
           onFilterContacts={this.SearchResultContacts()}
